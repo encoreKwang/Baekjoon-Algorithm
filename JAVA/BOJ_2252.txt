@@ -1,0 +1,45 @@
+import java.util.*;
+class Main {
+  public static void main(String[] args) {
+    Main T = new Main();
+    Scanner sc = new Scanner(System.in);
+    //위상정렬
+    //res배열, 큐, 진입차수 배열 필요
+    //이차원 arrList 필요, 해당 학생 다음에 와야하는 학생들을 삽입
+    int n = sc.nextInt(); //노드 개수
+    int m = sc.nextInt(); //간선 개수
+
+    ArrayList<Integer> res = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
+    for (int i = 0; i <= n; i++) {
+      arr.add(new ArrayList<Integer>());
+    }
+
+    int inDegree[] = new int[n + 1]; //진입 차수 배열, 인덱스가 해당 학생을 의미
+
+    for (int i = 0; i < m; i++) {
+      int s = sc.nextInt();
+      int next = sc.nextInt();
+      arr.get(s).add(next);
+      inDegree[next]++;
+    }
+
+    Queue<Integer> Q = new LinkedList<>(); //큐에다가 진입차수가 0인 학생을 넣을거임
+    for (int i = 1; i <= n; i++) {
+      if(inDegree[i] == 0) Q.offer(i);
+    }
+    while (!Q.isEmpty()) {
+      //연결되지 않은 그래프에서 위상정렬 -> 모든 정점을 지나면 q가 빈다
+      int tmp = Q.poll();
+      //꺼낸 학생은 res에 담고 연결된 간선을 없앤다
+      res.add(tmp);
+      for (int x : arr.get(tmp)) {
+        inDegree[x]--;
+        if(inDegree[x] == 0) Q.offer(x);
+      }
+    }
+    for (int x : res) {
+      System.out.print(x + " ");
+    }
+  }
+}
