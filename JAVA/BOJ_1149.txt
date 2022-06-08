@@ -1,0 +1,53 @@
+import java.util.*;
+class Main {
+  static final int Red = 0;
+  static final int Green = 1;
+  static final int Blue = 2;
+
+  static int[][] cost;
+  static int[][] dp;
+
+  public static void main(String[] args) {
+    Main T = new Main();
+    Scanner sc = new Scanner(System.in);
+    int n = sc.nextInt();
+    cost = new int[n][3];
+    for (int i = 0 ; i < n; i++) {
+      for (int j = 0; j < 3; j++) {
+        cost[i][j] = sc.nextInt();
+      }
+    }
+    int ans = Integer.MAX_VALUE;
+    //dp인데 3가지 색선택에 대한 점화식이 생김
+    //dp배열은 k번째 집이 color일 때, cost 총합의 최소값
+    //dp[k][red] = min(dp[k-1][green], dp[k-1][blue])
+    //dp[k][green] = min(dp[k-1][red], dp[k-1][blue])
+    //dp[k][blue] = min(dp[k-1][red], dp[k-1][green])
+
+    //따라서 마지막 집 dp[n][color 3가지]에 대해서 각각 재귀를 탐색해야한다.
+    dp = new int[n][3];
+    //dp 첫 행을 초기화한다
+    dp[0][Red] = cost[0][Red];
+    dp[0][Green] = cost[0][Green];
+    dp[0][Blue] = cost[0][Blue];
+
+    for (int i = 0; i < 3; i++) { //마지막 집이 각각 색깔일 경우, 최소값 구한다
+      int sum = T.DFS(n-1, i);
+      ans = Math.min(ans, sum);
+    }
+    System.out.println(ans);
+    }
+
+  public int DFS(int N, int color) { //재귀
+    if(dp[N][color] == 0){//아직 값을 계산하지 않은 경우에만 재귀 탐색
+      if(color == Red){
+        dp[N][color] = Math.min(DFS(N-1, Green), DFS(N-1, Blue)) + cost[N][color];
+      } else if (color == Green) {
+        dp[N][color] = Math.min(DFS(N-1, Red), DFS(N-1, Blue)) + cost[N][color];
+      } else if (color == Blue) {
+        dp[N][color] = Math.min(DFS(N-1, Red), DFS(N-1, Green)) + cost[N][color];
+      }
+    }
+    return dp[N][color];//이미 값이 있는 경우, 탐색할 필요없이 그 값을 리턴(그 값이 최솟값임)
+  }
+}
