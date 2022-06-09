@@ -1,0 +1,25 @@
+import java.util.*;
+class Main {
+  public static void main(String[] args) {
+    Main T = new Main();
+    Scanner sc = new Scanner(System.in);
+    int n = sc.nextInt();
+    int[] arr = new int[n];
+    int[] dp = new int[n];//dp[i]는 arr[i]가 최장증가수열의 가장 마지막 원소일 경우, 최대길이
+
+    for (int i = 0; i < n; i++) {
+      arr[i] = sc.nextInt();
+    }
+    int ans = 1;
+    dp[0] = 1; //dp 처음은 최소길이로 초기화
+    for (int i = 1; i < n; i++) {
+      int max = 0;
+      for (int j = i - 1; j >= 0; j--) { //앞에 있는 원소들 중 arr[i]의 값보다 작으면서 dp최대값 +1
+        if(arr[j] < arr[i] && dp[j] > max) max = dp[j];
+      }
+      dp[i] = max + 1; //기존의 자리값
+      ans = Math.max(ans, dp[i]);
+    }
+    System.out.println(ans);
+  }
+}
