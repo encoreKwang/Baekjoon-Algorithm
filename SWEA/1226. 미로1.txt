@@ -1,0 +1,72 @@
+import java.util.*;
+class Point{
+    int x;
+    int y;
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class Solution
+{
+    static int[] dx = {0, 1, 0, -1};
+    static int[] dy = {1, 0, -1, 0};
+    static Point start;
+    static Point end;
+    static int[][] map;
+    static boolean flag;
+
+    public void DFS(int x, int y) {
+        if (x == end.x && y == end.y) {
+            //마지막 도착장소에 도착함
+            flag = true;
+            return;
+        }
+        else{
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if(nx < 0 || nx > 15 || ny < 0 || ny > 15 || map[nx][ny] == 1 ) continue;
+                else {
+                    map[nx][ny] = 1;
+                    DFS(nx, ny);
+                    map[nx][ny] = 0; //재귀 끝나고 돌아올 때 다시 풀기
+                }
+            }
+        }
+    }
+
+
+    public static void main(String args[]) throws Exception
+    {
+        Scanner sc = new Scanner(System.in);
+        Solution sol = new Solution();
+        int T = 10;
+        //T=sc.nextInt();
+
+        for(int test_case = 1; test_case <= T; test_case++) {
+            sc.nextInt();
+            map = new int[16][16];
+            for (int i = 0; i < 16; i++) {
+                String row = sc.next();
+                for (int j = 0; j < 16; j++) {
+                    char c = row.charAt(j);
+                    map[i][j] = c - '0'; //더 작은 char형이 더 큰 int형으로  암시적 변환
+                    if (map[i][j] == 2) start = new Point(i, j);
+                    if (map[i][j] == 3) end = new Point(i, j);
+                }
+            }
+            flag = false;
+            //dfs로 재귀
+            if (start != null && end != null){
+                map[start.x][start.y] = 1; //시작점 다시 못오도록 막기
+                sol.DFS(start.x, start.y);
+                if(flag) System.out.println("#" + test_case + " " + 1);
+                else System.out.println("#" + test_case + " " + 0);
+
+
+            }
+        }
+    }
+}
