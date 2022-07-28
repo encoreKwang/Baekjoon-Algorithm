@@ -1,0 +1,41 @@
+import java.util.*;
+class Obj{
+  int weight;
+  int value;
+
+  public Obj(int weight, int value) {
+    this.weight = weight;
+    this.value = value;
+  }
+}
+
+class Main {
+  public int solution(int n , int m , ArrayList<Obj> arr ) {
+    int[] dp = new int[m+1]; //dp[i] -> i의 무게일 때 가능한 최대 가치
+    Arrays.fill(dp, 0);
+
+    for (int i = 0; i < n; i++) {  //물건 탐색
+      for (int j = m; j >= arr.get(i).weight; j--) {
+        dp[j] = Math.max(dp[j], dp[j - arr.get(i).weight] + arr.get(i).value);
+      }
+    }
+    return dp[m];
+  }
+
+  public static void main(String[] args) {
+    Main T = new Main();
+    Scanner kb = new Scanner(System.in);
+    int n = kb.nextInt(); //물건 갯수
+    int m = kb.nextInt(); //가능 무게
+    ArrayList<Obj> arr = new ArrayList<>();
+    for (int i = 0; i < n; i++) {
+      int w = kb.nextInt();
+      int v = kb.nextInt();
+      arr.add(new Obj(w, v));
+    }
+    System.out.println(T.solution(n, m, arr));
+  }
+}
+
+
+

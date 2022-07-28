@@ -1,0 +1,32 @@
+import java.util.*;
+class Main {
+  static int[] dy;
+  static int n;
+  //dynamic programming, 냅색 알고리즘
+  public static void main(String[] args) {
+    Main T = new Main();
+    Scanner kb = new Scanner(System.in);
+    n = kb.nextInt();
+    dy = new int[n + 1];
+    Arrays.fill(dy, -1);
+    dy[0] = 0;
+    //3kg, 5kg
+    int[] arr = new int[2];
+    arr[0] = 3;
+    arr[1] = 5;
+    for (int i = 0; i < 2; i++) {
+      for (int j = arr[i]; j <= n; j++) {
+        if(dy[j - arr[i]] == -1) continue;
+        else{
+          if (dy[j] == -1) dy[j] = dy[j - arr[i]] + 1; //dy[j - arr[i]]이 일단 -1이 아니면서 dy[j]가 -1인데 min을 써야하므로
+          //-1일 경우는 무지성 입력하도록 따로 조건을 빼논다.
+          else dy[j] = Math.min(dy[j], dy[j - arr[i]] + 1);
+        }
+      }
+    }
+    System.out.println(dy[n]);
+  }
+}
+
+
+

@@ -1,0 +1,31 @@
+ import java.util.*;
+ class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+//            int T;
+//            T=sc.nextInt();
+//            for(int test_case = 1; test_case <= T; test_case++)
+//            {
+//            }
+
+            char[] s1 = sc.next().toCharArray();
+            char[] s2 = sc.next().toCharArray();
+
+            int length_s1= s1.length;
+            int length_s2 = s2.length;
+            //인덱스를 추가해서 범위가 넘어가지 않도록 한다.
+            int[][] dp = new int[length_s1 + 1][length_s2 + 1];
+            for (int i = 1; i <= length_s1; i++) {
+                for (int j = 1; j <= length_s2; j++) {
+                    if(s1[i-1] == s2[j-1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+                    else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+            System.out.println(dp[length_s1][length_s2]);
+        }
+    }
