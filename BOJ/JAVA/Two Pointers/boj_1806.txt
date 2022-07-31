@@ -1,0 +1,35 @@
+import java.util.*;
+
+class Main {
+  public int solution(int n , int m , int[] arr ) {
+    int lt = 0, rt = 0;
+    int ans = Integer.MAX_VALUE;
+    int tot = arr[lt];
+    for (; lt < n; lt++) {
+      while(rt < n && tot < m){
+        rt++;
+        if(rt != n) tot += arr[rt];
+      }
+      if(rt == n) break;//이 조건이라면 tot를 갱신못하고 while문을 벗어났다는 것이고 더 이상 tot를 증가 시킬 수 없음을 의미
+      ans = Math.min(ans, rt - lt + 1);
+      tot -= arr[lt];
+    }
+    if(ans == Integer.MAX_VALUE) ans = 0;
+    return ans;
+  }
+
+  public static void main(String[] args) {
+    Main T = new Main();
+    Scanner kb = new Scanner(System.in);
+    int n = kb.nextInt();
+    int m = kb.nextInt();
+    int[] arr = new int[n];
+    for (int i = 0; i < n; i++) {
+      arr[i] = kb.nextInt();
+    }
+    System.out.println(T.solution(n, m, arr));
+  }
+}
+
+
+
