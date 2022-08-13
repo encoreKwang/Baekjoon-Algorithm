@@ -1,0 +1,37 @@
+ import java.util.*;
+ class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                String s = sc.next();
+                //모든 자리수를 돌면서 바꾸서 모든 경우의 수를 구한다
+                char[] cArr = s.toCharArray();
+                int max = Integer.parseInt(s), min = max;
+
+                for (int i = 0; i < cArr.length - 1; i++) {
+                    for (int j = i + 1; j < cArr.length; j++) {
+                        char tmp =  cArr[i];
+                        cArr[i] = cArr[j];
+                        cArr[j] = tmp;
+                        if(cArr[0] != 48 && Integer.parseInt(String.valueOf(cArr)) < min){
+                            min = Integer.parseInt(String.valueOf(cArr));
+                        }
+                        if(cArr[0] != 48 && Integer.parseInt(String.valueOf(cArr)) > max){
+                            max = Integer.parseInt(String.valueOf(cArr));
+                        }
+                        tmp =  cArr[i];
+                        cArr[i] = cArr[j];
+                        cArr[j] = tmp;
+                    }
+                }
+                System.out.println("#" + test_case + " " + min + " " + max);
+
+            }
+        }
+    }

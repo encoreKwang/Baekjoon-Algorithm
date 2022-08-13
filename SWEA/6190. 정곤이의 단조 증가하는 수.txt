@@ -1,0 +1,58 @@
+ import java.util.*;
+ class Solution
+    {
+        static int[] arr;
+        static int n, ans, tmp;
+        public void DFS(int L, int s){ //s는 시작인덱스
+            if (L == 2) {
+                //아 최대값 확인하기전에 "단조"가 되는지 확인
+                if (possible(tmp)) {
+                    if(ans < tmp) ans = tmp;
+                }
+            }
+            else{
+                //CH은 조합구할 때, 필요없네
+                //현재 고른 인덱스 다음부터 반복문을 시작하면되자나
+                for (int i = s; i < n; i++) {
+                    tmp *= arr[i];
+                    DFS(L+1, s = i+1);
+                    tmp /= arr[i]; //재귀 돌아왔으면 다시 나눠준다
+                }
+            }
+        }
+        public boolean possible(int tmp) {
+            //단조가 되는지 확인
+            //점차 증가니까 일의 자리수가 가장 크고 점차 작아져야함
+            int rest = Integer.MAX_VALUE;
+            while(tmp != 0){
+                int restTmp = tmp % 10; //일의 자리수
+                if(rest >= restTmp){ //직전의 나머지보다 작거나 같다
+                    rest = restTmp;
+                    tmp /= 10;
+                }
+                else return false;
+            }
+            return true;
+        }
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                n = sc.nextInt();
+                arr = new int[n];
+                for (int i = 0; i < n; i++) {
+                    arr[i] = sc.nextInt();
+                }
+                //먼저 두 원소의 조합을 만들어야함 - > dfs
+               //한 조합에서 단조가 가능한지 확인해야함 그리고 그 과정에서 조합 곱의 최대값
+                ans = -1;
+                tmp = 1; //곱해야되니까 0이 아닌 1
+                Sol.DFS(0, 0);
+                System.out.println("#" + test_case + " " + ans);
+            }
+        }
+    }

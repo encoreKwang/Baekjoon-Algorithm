@@ -1,0 +1,65 @@
+ import java.util.*;
+ class Solution
+    {
+        static int[] p1_arr, p2_arr;
+        static boolean[] ch;
+        static int sum_p1, sum_p2;
+        static int vic, defeat; //p1이 승리하는 경우의 수, 패배하는 경우의 수
+
+        public void DFS(int L) { //L이 곧 순서를 의미
+            //p2_arr의 값들의 순열들을 구해서 각각 승패를 구해본다.
+            if (L == 9) {
+                if(sum_p1 > sum_p2) vic++;
+                else defeat++;
+            }
+            else{
+                for (int i = 0; i < 9; i++) {
+                    if(ch[i] == false) { //순열의 요소로 체크하기
+                        ch[i] = true;//현재 L(즉, 순서)에서 p2의 i인덱스를 뽑았다는 의미
+                        int s = p1_arr[L]  + p2_arr[i];
+                        if( p1_arr[L] > p2_arr[i]) sum_p1 += s;
+                        else sum_p2 += s;
+                        DFS(L+1);
+                        ch[i] = false;//다시 순열에서 해당 카드가 빠지니까 배줘야함.
+                        //그럼 sum도 빼줘????? 그치 해당 L에서 다시 카드를 뽑아서
+                        //새로운 순열을 만들어주는거니까 이전 더해진 s값은 빼줘야지..
+                        if( p1_arr[L] > p2_arr[i]) sum_p1 -= s;
+                        else sum_p2 -= s;
+                    }
+                }
+            }
+        }
+
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T = 10;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                //인덱스로 순열 DFS를 할거고 값자체는 따로 배열을 만듦.
+                int[] card = new int[19]; //인덱스 1 ~ 18
+                p1_arr  = new int[9]; //규영카드
+                p2_arr  = new int[9]; //인영이의 카드
+
+                for (int i = 0; i < 9; i++) {
+                    int c = sc.nextInt();
+                    p1_arr[i] = c;
+                    card[c]++;
+                }
+                int pos = 0;
+                for (int i = 1; i <= 18; i++) {
+                    if(card[i] == 0) p2_arr[pos++] = i; //p2의 카드 완성.
+                }
+                ch = new boolean[9];
+                sum_p1 = 0;
+                sum_p2 = 0;
+                vic = 0;
+                defeat= 0;
+                Sol.DFS(0);
+                System.out.println("#" + test_case + " " +  vic + " " + defeat);
+
+            }
+        }
+    }

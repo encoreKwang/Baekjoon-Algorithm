@@ -1,0 +1,145 @@
+ import java.util.ArrayList;
+ import java.util.Scanner;
+    class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T ;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int h = sc.nextInt();
+                int w = sc.nextInt();
+                char[][] map = new char[h][w];
+                int x = 0;//전차의 위치
+                int y = 0;
+                int dir = 0; //현재의 방향, 1 = 위, 2 = 아래, 3 = 왼, 4 = 오
+                for (int i = 0; i < h; i++) {
+                    String s = sc.next();
+                    for (int j = 0; j < w; j++) {
+                        map[i][j] = s.charAt(j);
+                        switch (map[i][j]){
+                            case '^' :
+                                dir = 1;
+                                x = i;
+                                y = j;
+                                break;
+                            case 'v' :
+                                dir = 2;
+                                x = i;
+                                y = j;
+                                break;
+                            case '<' :
+                                dir = 3;
+                                x = i;
+                                y = j;
+                                break;
+                            case '>' :
+                                dir = 4;
+                                x = i;
+                                y = j;
+                                break;
+                        }
+                    }
+                }
+                int n = sc.nextInt();
+                String action = sc.next();
+                for (char c : action.toCharArray()) {
+                    int idx =0;
+                    switch (c) {
+                        case 'U' :
+                            dir = 1;
+                            map[x][y] = '^';
+                            if(x>0 && map[x-1][y] == '.'){
+                                map[x - 1][y] = map[x][y];
+                                map[x][y] = '.';
+                                x -= 1;//전차의 위치 변경
+                            }
+                            break;
+                        case 'D' :
+                            dir = 2;
+                            map[x][y] = 'v';//방향 바꾸기
+                            if(x < h-1 && map[x+1][y] == '.'){
+                                map[x+1][y] = map[x][y];
+                                map[x][y] = '.';
+                                x += 1;//전차의 위치 변경
+                            }
+                            break;
+                        case 'L' :
+                            dir = 3;
+                            map[x][y] = '<';
+                            if(y > 0 && map[x][y-1] == '.'){
+                                map[x][y-1] = map[x][y];
+                                map[x][y] = '.';
+                                y -= 1;//전차의 위치 변경
+                            }
+                            break;
+                        case 'R' :
+                            dir = 4;
+                            map[x][y] = '>';
+                            if(y < w - 1 && map[x][y+1] == '.'){
+                                map[x][y+1] = map[x][y];
+                                map[x][y] = '.';
+                                y += 1;//전차의 위치 변경
+                            }
+                            break;
+                        case 'S' :
+                            switch (dir){
+                                case 1 :
+                                    idx = x;
+                                    while (true) {
+                                        if(idx - 1 < 0 || map[idx-1][y] == '#') break;
+                                        if(map[idx-1][y] == '*') {
+                                            map[idx - 1][y] = '.';
+                                            break;
+                                        }
+                                        idx--;
+                                    }
+                                    break;
+                                case 2 : //아래
+                                    idx = x;
+                                    while (true) {
+                                        if(idx + 1 > h -1 || map[idx+1][y] == '#') break;
+                                        if( map[idx+1][y] == '*') {
+                                            map[idx+1][y] = '.';
+                                            break;
+                                        }
+                                        idx++;
+                                    }
+                                    break;
+                                case 4 : //오른쪽
+                                    idx = y;
+                                    while (true) {
+                                        if(idx + 1 > w -1 || map[x][idx+1] == '#') break;
+                                        if( map[x][idx+1]== '*') {
+                                            map[x][idx+1]= '.';
+                                            break;
+                                        }
+                                        idx++;
+                                    }
+                                    break;
+                                case 3 : //왼쪽
+                                    idx = y;
+                                    while (true) {
+                                        if(idx - 1 < 0 || map[x][idx-1] == '#') break;
+                                        if( map[x][idx-1]== '*') {
+                                            map[x][idx-1]= '.';
+                                            break;
+                                        }
+                                        idx--;
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                }
+                System.out.print("#" + test_case + " ");
+                for (int i = 0; i < h; i++) {
+                        System.out.print(map[i]);
+                    System.out.println();
+                }
+            }
+        }
+    }

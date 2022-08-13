@@ -1,0 +1,36 @@
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Scanner;
+ import java.util.Stack;
+
+ class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T = 10 ;
+//            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int n = sc.nextInt();
+                String s = sc.next();
+                //스택이구나...
+                Stack<Character> stack = new Stack<>();
+                for (int i = 0; i < s.length(); i++) {
+                    if(!stack.isEmpty() && stack.peek() == s.charAt(i)){
+                        stack.pop();
+                    } else stack.push(s.charAt(i));
+                }
+                Stack<Character> ans = new Stack<>();
+                while(!stack.isEmpty()){
+                    ans.push(stack.pop());
+                }
+                System.out.print("#" + test_case + " ");
+                while(!ans.isEmpty()){
+                    System.out.print(ans.pop());
+                }
+                System.out.println();
+            }
+        }
+    }

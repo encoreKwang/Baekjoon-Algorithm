@@ -1,0 +1,44 @@
+ import java.util.Scanner;
+    class Solution
+    {
+        static int n , cnt;
+        static boolean[] isUsed, isUsed2, isUsed3;//열, 우측대각선, 좌측대각선
+        public void DFS(int L){ //L이 현재 행을 의미
+            if(L == n) { //퀸이 모두 채워졌을때
+                cnt++;
+                return;
+            }
+            else {
+                for (int i = 0; i < n; i++) { //각 열을 확인함. 해당 열이 가능한지 확인
+                    if(isUsed[i] || isUsed2[L + i] || isUsed3[L - i + n -1]) continue;
+                    else {
+                        isUsed[i] = true;
+                        isUsed2[L + i] = true; //L이 곧 해당 행을 의미, 좌측 대각선
+                        isUsed3[L - i + n - 1] = true;//우측 대각선
+                        DFS(L + 1);
+                        isUsed[i] = false;
+                        isUsed2[L + i] = false;
+                        isUsed3[L - i + n - 1] = false;
+                    }
+                }
+            }
+        }
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                n = sc.nextInt();
+                cnt = 0;
+                //하나의 행당 하나의 퀸.
+                isUsed = new boolean[40];//해당 인덱스이 열이 쓰였는지.
+                isUsed2 = new boolean[40];//해당 인덱스이 좌측 대각선이 쓰였는지. x+y
+                isUsed3 = new boolean[40];//해당 인덱스이 우측 대각선이 쓰였는지. x-y+n-1
+                Sol.DFS(0);
+                System.out.println("#"+ test_case + " "  +cnt);
+            }
+        }
+    }

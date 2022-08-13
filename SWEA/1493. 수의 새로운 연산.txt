@@ -1,0 +1,75 @@
+ import java.util.*;
+ class Point{
+     int x;
+     int y;
+     public Point(int x, int y) {
+         this.x = x;
+         this.y = y;
+     }
+ }
+ class Solution
+    {
+        public Point getPoint(int value) {
+            int sum =0;
+            for (int i = 1; ; i++) { //sum이 value보다 작다면 계속
+                sum += i;//i번째 대각선의 점들의 수.
+                if(sum >= value) {
+                    int x = i - (sum - value);
+                    int y = i + 1 - x;
+                    return new Point(x, y);
+                }
+            }
+            //반복문을 벗어났을떄의 i가 value가 들어있는 i번째 대각선임
+            //이제 좌표를 구해야되는데 x값은 i가 가능한 x좌표 최대값이고 sum은 가능한 최대 점 넘버이니까
+            //x = i - (sum - value)  <- value만큼 이전에 있다는 것니까
+            //그리고 좌우 대각선안에서 x+y값은 모든 점에서 같고
+            // x + y = i + 1; 라는 식이 성립되므로 y값을 구한다.
+
+
+        }
+
+        public int getValue(Point point) {
+            //먼저 point 좌표가 존재하는 i번째 대각선의 왼쪽 끝값 구하기
+            int sum = 1;
+            //원소의 차가 등차수열인 수열
+            //x+y-1 = i -> i번째 대각선의 최대(최종)값이다.
+            //즉 sum=1로 초기화해서 다음 대각선의 왼쪽 끝값을 구하도록 한거다.
+            //따라서 구하고자하는 대각선의 바로 직전 대각선 최대값까지만 구해야한다.
+            for (int i = 1; i < (point.x + point.y) - 1; i++) {
+                sum += i;
+            }
+            //그리고 구한 왼쪽 끝값(이때 x값은 1)에다가 point좌표의 x값이 얼마나 떨어진지를
+            //더함으로써 좌표의 값을 구할 수 있음
+            int value = sum + (point.x - 1);
+            return value;
+        }
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int p = sc.nextInt();
+                int q = sc.nextInt();
+                //p q에 각각 해당하는 좌표를 우선 구해야함
+                //좌표를 구할 때 몇번째 대각선인지 알아야함
+                //대각선의 점은 다음 대각선으로 가면서 1개 + 2개 + -- +n개로 늘어난다.
+                //고로 p의 값이 있는 대각선은 sum이 p보다 커지는 때의
+                // i번째 대각선이다.
+
+                Point pointP = Sol.getPoint(p);
+                Point pointQ = Sol.getPoint(q);
+                //해당 좌표를 더한 좌표를 구해서 좌표에 해당하는 값을 구해야함.
+                Point point = new Point(pointP.x + pointQ.x, pointP.y + pointQ.y);
+                //좌표에 해당하는 값을 구할 땐 왼쪽 대각선 끝을 구한다.
+                //1, 2, 4, 7, 11 이런식으로 늘어난다
+                //sum += i;
+                int value = Sol.getValue(point);
+
+                System.out.println("#" + test_case+ " " + value);
+
+            }
+        }
+    }

@@ -1,0 +1,40 @@
+ import java.util.Scanner;
+    class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T = 10;
+//            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int n = sc.nextInt();
+                int board[][] = new int[n][n];
+
+                int cnt = 0;
+               for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        board[i][j] = sc.nextInt();
+                    }
+                }
+                //한 열을 탐색해야함.
+                for (int i = 0; i < n; i++) {
+//                    boolean flag1 = false;
+                    boolean flag1 = false; //1번 자석이 S극으로 향하는 자석
+                    for (int j = 0; j < n; j++) {
+                        if(board[j][i] == 2 && flag1 == false) continue;
+                        else if (board[j][i] == 2 && flag1 == true){
+                            cnt++;
+                            flag1 = false;
+                        }
+                        else if (board[j][i] == 1){
+                            flag1 = true;
+                        }
+                    }
+                }
+                System.out.println("#" + test_case + " " +cnt);
+
+            }
+        }
+    }

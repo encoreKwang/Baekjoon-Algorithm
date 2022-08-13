@@ -1,0 +1,53 @@
+ import java.util.ArrayList;
+ import java.util.Scanner;
+    class Solution
+    {
+        static ArrayList<ArrayList<Integer>> arr;
+        static boolean[] ch;
+        static int max;
+        public void DFS(int L, int v) { //그때의 정점v에 연결된 정점들로 이동하는데 ch되어있다면
+            if(L > max){
+                max = L;
+            }
+            for (int x : arr.get(v)) {
+                if (ch[x] == false) {
+                    ch[x] = true;
+                    DFS(L + 1, x);
+                    ch[x] = false;
+                }
+            }
+        }
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T ;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int n = sc.nextInt();//정점의 개수
+                int m = sc.nextInt();//간선 개수
+                //연결된 간선을 어떻게 구현할까?
+                //그래프 혹은 연결리스트
+                //두 정점 사이에 여러 간선이 존재할 수 있다
+                arr = new ArrayList<>();
+                for (int i = 0; i < n+1; i++) {
+                    arr.add(new ArrayList<Integer>());//arr의 인덱스 또한 정점의 값과 같도록
+                    //n+1까지 생성해줘야한다.
+                }
+                for (int i = 0; i < m; i++) {
+                    int v1 = sc.nextInt();
+                    int v2 = sc.nextInt();
+                    arr.get(v1).add(v2);
+                    arr.get(v2).add(v1); //무방향이니까 두번
+                }
+                max = 1;
+                for (int i = 0; i < n; i++) {
+                    ch = new boolean[n+1];
+                    ch[i+1] = true;
+                    Sol.DFS(1, i+1);
+                }
+                System.out.println("#" + test_case + " " + max);
+            }
+        }
+    }

@@ -1,0 +1,36 @@
+ import java.util.*;
+ class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int n = sc.nextInt();
+                int k = sc.nextInt();
+                int s = 0; //한 조의 등수 총합
+                if(n % 2 == 0) { //한 조의 n명이 짝수일 경우 각 조의 등수 총합이 모두 같다
+                    //따라서 모든 등수의 총합을 구해서 k조로 나누면 각 조의 등수 총합이 나온다.
+                    s = n*(1+ n*k) / 2;
+                    System.out.print("#" + test_case );
+                    for (int i = 0; i < k; i++) {
+                        System.out.print(" " + s);
+                    }
+                }
+                else { //홀수일 경우, 먼저 n-1번까지 짝수로 각 조의 등수 총합을 구하고
+                    //마지막 n번째 && 1조에 해당하는 값을 더해준다. 그리고
+                    // 다음 조의 등수 총합은 거기서 +1씩 더해준다.
+                    s = (n-1) * (1 + (n-1)*k) /2 ;
+                    s += (n-1) * k + 1;
+                    System.out.print("#" + test_case );
+                    for (int i = 0; i < k; i++) {
+                        System.out.print(" " + s++);
+                    }
+                }
+                System.out.println();
+            }
+        }
+    }

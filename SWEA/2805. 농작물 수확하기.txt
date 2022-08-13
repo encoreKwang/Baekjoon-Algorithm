@@ -1,0 +1,36 @@
+ import java.util.LinkedList;
+ import java.util.Queue;
+ import java.util.Scanner;
+    class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int size = sc.nextInt();
+                int sum = 0;
+                for (int i = size / 2; i >= 0; i--) { //마름모 상단, 한 행의 열의 인덱스를
+                    // 따질 때, 처음 인덱스가 size의 절반부터 시작하고 점점 줄어들고
+                    // 그 끝 인덱스는 점점 늘어난다.
+                    //그리고 상단의 줄 개수는 size/2개 + 1개(가운데) 이다.
+                    String s = sc.next();
+                    for (int j = i; j < size - i; j++) {
+                        sum += s.charAt(j) - '0';
+                    }
+                }
+                for (int i = 1; i <= size / 2; i++) { //마름모 하단부분, 한 행의 열의 인덱스
+                    //를 따질때, 처음 인덱스가 1부터 시작하겠지. 그리고 점점 인덱스 커짐.
+                    //마지막 인데스는 처음엔 6이었다가 점점 줄인든다.
+                    //그리고 하단의 줄개수는 size/2개다.
+                    String s = sc.next();
+                    for (int j = i; j < size - i; j++) {
+                        sum += s.charAt(j) - '0';
+                    }
+                }
+                System.out.println("#" + test_case + " " + sum);
+            }
+        }
+    }

@@ -1,0 +1,67 @@
+ import java.util.*;
+ class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                //각 주차공간에 할당하는 단위 무게당 가격을 넣을 map parkPrice
+                HashMap<Integer, Integer> parkPriceMap = new HashMap<>();
+                //각 자동차에 할당되는 무게를 넣은 map carWeight
+                HashMap<Integer, Integer> carWeightMap = new HashMap<>();
+
+                //가능한 주차공간 중 가장 낮은 번호의 주차공간을 내여줄 우선순위 큐
+                PriorityQueue<Integer> remainSpaceQ = new PriorityQueue<>();
+                //만약 우선순위 큐에 주차공간이 없을 경우, 대기차량을 저장해둘 큐
+                Queue<Integer> waitingQ = new LinkedList<>();
+
+                int n = sc.nextInt(); //주차공간 개수
+                int m = sc.nextInt(); //자동차 개수
+                int totalProfit = 0;
+
+                //주차한 자동차와 주차공간을 연결시킬 배열이 필요함.
+                //차량번호 인덱스에 값은 주차 공간 번호를 넣는다. 나중에 떠날때 해당 값을 다시
+                //우선순위큐에 넣는다
+                int[] carParkingSpace = new int[m+1];
+
+                for (int i = 1; i <= n; i++) {
+                    parkPriceMap.put(i, sc.nextInt());
+                    //우선순위 큐에 주차공간을 전부 넣는다
+                    remainSpaceQ.offer(i);
+                }
+                for (int i = 1; i <= m; i++) {
+                    carWeightMap.put(i, sc.nextInt());
+                }
+
+                for (int i = 0; i < m * 2; i++) {
+                    int tmpCar = sc.nextInt();
+                    if(tmpCar > 0) { //양수면 들어오는 것
+                        //들어오는데 남은 주차공간이 있는지 없는지 확인
+                        if(remainSpaceQ.isEmpty()) waitingQ.offer(tmpCar);
+                        else {
+                            int space = remainSpaceQ.poll();
+                            carParkingSpace[tmpCar] = space;
+                        }
+                    }
+                    else{//음수면 나가는 것
+                        tmpCar *= -1;
+                        int space = carParkingSpace[tmpCar];
+                        //빈 자리를 다시 우선순위큐에 넣는다
+                        remainSpaceQ.offer(space);
+                        totalProfit += parkPriceMap.get(space) * carWeightMap.get(tmpCar);
+
+                        //그리고 기다리는 차가 있으면 그 자리에 넣는다
+                        if(!waitingQ.isEmpty()) {
+                            space = remainSpaceQ.poll();
+                            carParkingSpace[waitingQ.poll()] = space;
+                        }
+                    }
+                }
+                System.out.println("#" + test_case + " "+ totalProfit);
+            }
+        }
+    }

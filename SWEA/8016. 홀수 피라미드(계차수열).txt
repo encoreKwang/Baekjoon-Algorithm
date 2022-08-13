@@ -1,0 +1,41 @@
+ import java.util.*;
+ class Solution
+    {
+        static long n;
+        public long bArrSum(int b1, int d, long num) {
+            //계차수열의 막항 구하기
+            //등차수열의 일반항 공식 an = a1 + (n-1)d;
+            long bLast = b1 + (num-1) * d;
+            //등차수열의 합 공식 a1 + (d * (a1 + an) / 2);
+            long sum = num * (b1 + bLast) / 2;
+            return sum;
+        }
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                n = sc.nextInt();
+                //계차수열
+                int d = 4;// 계차수열의 공차
+                //an = a1 + b1 +...+bn-1;
+                int a1 = 1;
+                int b1 = 2; //계차수열의 첫 항, 왼쪽 끝
+                //b1+bn-1까지 합을 구함.
+                //왼쪽 기준 계차수열의 합
+                long leftSum = Sol.bArrSum(b1, d, n -1); //계차수열에서 항이 하나 작으니까 n -1을 보냄
+
+                b1 = 6;//오른쪽 끝
+                long rightSum= Sol.bArrSum(b1, d, n -1);
+
+                //a1초항을 더해줘야함
+                leftSum += 1;
+                rightSum += 1;
+                
+                System.out.println("#" +test_case +  " " + leftSum + " " +rightSum);
+            }
+        }
+    }

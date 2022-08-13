@@ -1,0 +1,29 @@
+ import java.util.ArrayList;
+ import java.util.Scanner;
+    class Solution
+    {
+        static int max;
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T ;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                int n = sc.nextInt();//재료의 수.
+                int L = sc.nextInt();//제한 칼로리
+                int[] dp = new int[L+1]; //각 인덱스가 제한 칼로리를 의미
+                //i칼로리까지 가능할때의 최대점수.
+                for (int i = 0; i < n; i++) {
+                    int score = sc.nextInt();//해당 재료의 맛에 대한 점수
+                    int cal = sc.nextInt(); //해당 재료의 칼로리
+                    //제한된 재료(각 한번씩만 사용가능 -> 역순으로 dp 갱신)
+                    for (int j = L; j >= cal; j--) { //해당 재료의 칼로리까지만 dp갱신 가능
+                        dp[j] = Math.max(dp[j], dp[j-cal] + score);
+                    }
+                }
+                System.out.println("#"  + test_case+ " " + dp[L]);
+            }
+        }
+    }

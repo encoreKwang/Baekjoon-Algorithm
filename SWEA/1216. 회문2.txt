@@ -1,0 +1,57 @@
+ import java.util.Scanner;
+    class Solution
+    {
+        static int max;
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T = 10;
+//            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                sc.nextInt();
+                char[][] board = new char[100][100];
+                max = 0;
+                for (int i = 0; i < 100; i++) {
+                    board[i]= sc.next().toCharArray();
+                }
+                //스트링의 시작과 끝을 정해준다.
+                //모든 시작에 대해서 + 모든 끝에 대해서 탐색
+                for (int s = 0; s < 100; s++) {
+                    for (int e = 99; e > s + max - 1; e--) { //길이 max보다 같거나 작은 경우는 탐색할 필요없음
+                        int len = e - s + 1;
+                        int half = len / 2; //회문을 검사할 때, 동시에 양쪽을 확인하는 것이기떄문에 절반만 확인하면됨.
+                        //각 s부터 e까지의 스트링에 대해서 회문검사
+                        for (int i = 0; i < 100; i++) { //모든 행을 탐색해야함
+                            boolean flag = true;
+                            for (int j = 0; j < half; j++) { //열에 대해서 half-1 까지만 탐색하면됨.
+                                if(board[i][s+j] != board[i][e-j]) {
+                                     flag = false;
+                                     break; //더 이상 해당 i행의 s~e 스트링에 대해서 회문 검사할 필요 없음
+                                }
+                            }
+                            if(!flag) continue;
+                            if(len > max) max = len; //flag 조건 통과했다면 max 갱신
+                        }
+
+                        //여기부턴 세로 s~e 스트링에 대해서 회문 검사
+                        for (int i = 0; i < 100; i++) { //모든 열에 대해서 탐색
+                            boolean flag = true;
+                            for (int j = 0; j < half; j++) {//각 열의 행을 half까지 확인하면서 회문 검사
+                                if(board[s+j][i] != board[e-j][i]) {
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if(!flag) continue;
+                            if(len > max) max = len;
+                        }
+                    }
+                }
+                System.out.println("#" +test_case +  " " + max);
+
+
+            }
+        }
+    }

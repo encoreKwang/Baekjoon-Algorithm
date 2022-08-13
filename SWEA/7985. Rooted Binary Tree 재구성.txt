@@ -1,0 +1,53 @@
+ import java.util.*;
+ import java.lang.Math;
+ class Solution
+    {
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                //완전 이진 트리를 중위 순회 순서를 알려주기 떄문에
+                // 항상 가운데 인덱스가 루트 노드라는게 보장된다.
+                //재귀호출로 루트 노드를 계속 구해가는 식으로 이진 트리를 재구성할 수 있다.
+                //루트 노드로 트리의 레벨별 요소를 구성해나간다.
+                int k = sc.nextInt();
+                int n = (int)Math.pow(2, k) - 1; //정점의 개수
+                //중위 순회한 순서를 입력한 배열이 필요해
+                int[] node = new int[n];
+                for (int i = 0; i < n; i++) {
+                    node[i] = sc.nextInt(); // 3 2 7 5 6 1 4
+                }
+                //Level 별로 왼쪽부터 출력할 배열이 필요
+                //이 배열은 인덱스 1~n까지 필요하다. 재귀에서 루트노드를 계속 찾아가기 떄문에,
+                //레벨별로 갯수가 2^(L-1)로 늘어나기 때문에 그 갯수를 맞춰서 tree 배열에
+                //넣을려면 레벨별로 인덱스 *2로 맞춰줘야한다.
+                int[] tree = new int[n + 1];
+                Sol.DFS(0, n-1, 1, 0, tree, node);
+
+                System.out.print("#" + test_case + " ");
+                int num  =0 ;
+                int i = 1;
+                for (int level = 0; level < k; level++) {
+                    num += (int)Math.pow(2, level);
+                    for (; i <= num; i++) {
+                        System.out.print(tree[i] + " ");
+                    }
+                    System.out.println();
+                }
+            }
+        }
+        public void DFS(int left, int right, int treeIndex, int nodeIndex, int[] tree, int[] node){
+            int root = (left+right)/2;
+            tree[treeIndex] = node[root];
+
+            if(left == right) return;
+            //왼쪽부분에 대해서 루트 노드를 구하는 재귀 호출
+            DFS(left, root-1, treeIndex * 2, root, tree, node);
+            //오른쪽 부분에 대해서 루트 노드를 구하는 재귀 호출
+            DFS(root+1, right, treeIndex * 2 + 1, root, tree, node);
+        }
+    }

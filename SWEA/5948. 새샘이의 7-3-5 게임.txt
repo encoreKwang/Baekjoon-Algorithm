@@ -1,0 +1,44 @@
+ import java.util.*;
+ class Solution
+    {
+        static int[] arr;
+        static int sum;
+        static TreeSet<Integer> set;
+        public void DFS(int L, int s) {
+            if (L == 3) {
+                set.add(sum);
+            }
+            else{
+                for (int i = s; i < 7; i++) {
+                    sum += arr[i];
+                    DFS(L+1, i+1);
+                    sum -= arr[i];
+                }
+            }
+        }
+        public static void main(String args[]) throws Exception
+        {
+            Solution Sol= new Solution();
+            Scanner sc = new Scanner(System.in);
+            int T;
+            T=sc.nextInt();
+            for(int test_case = 1; test_case <= T; test_case++)
+            {
+                arr = new int[7];
+                sum = 0;
+                set = new TreeSet<>();
+                for (int i = 0; i < 7; i++) {
+                    arr[i] = sc.nextInt();
+                }
+                //7C3 조합을 해야함
+                Sol.DFS(0, 0);
+                int cnt = 1;
+                //set을 정렬하는 두 가지 방법 ->arr로 바꾸기 or arrlist로 바꾸기
+//                ArrayList<Integer> arrayList = new ArrayList<>(set);
+//                Collections.sort(arrayList);
+                Object[] objects = set.toArray();
+                Arrays.sort(objects);
+                System.out.println("#" + test_case + " " + objects[objects.length - 5]);
+            }
+        }
+    }
