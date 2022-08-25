@@ -1,43 +1,36 @@
-
 /**
- * 궁수의 위치에 대한 경우의 수를 따져야함
- * 포인트는 같은 적이 여러 궁수에게 공격 당할 수 있고
- * 가장 가까운 적이 여럿인 경우엔 , 가장 왼쪽에 있는 적을 공격한다
+ * 궁수의 사정거리를 BFS로 삼방탐색을 한다.
+ * 그 사정거리에 있는 적들의 (x, y, 거리)를 저장한다.
+ * 좌 상 우 순서로 탐색 -> 같은 거리 일 때, 자동적으로 왼쪽부터 뽑힌다.
  */
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main_17135_이광용 {
+public class Main_17135_이광용{
 
 	private static int N;
 	private static int M;
-	private static int D, ans;
-//	private static int[][] map;
-	private static ArrayList<Point> enemys;
+	private static int D, maxKill;
 	private static int[] combiArr;
-	private static HashMap<Point, Integer> hmap;
+	private static int enemyCnt;
+	private static int[][] map;
+	private static int[] dx = {0, -1, 0}; //좌 상 우
+	private static int[] dy = {-1, 0, 1};
 
-
-	public static class Point {
-		int x, y;
-
-		public Point(int x, int y) {
+	public static class DisPoint{
+		int x, y, dis;
+		public DisPoint(int x, int y, int dis) {
 			this.x = x;
 			this.y = y;
+			this.dis = dis;
 		}
-
-		@Override
-		public String toString() {
-			return "Point [x=" + x + ", y=" + y + "]";
-		}
-
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -46,98 +39,111 @@ public class Main_17135_이광용 {
 		N = Integer.parseInt(st.nextToken());// 행
 		M = Integer.parseInt(st.nextToken());// 열
 		D = Integer.parseInt(st.nextToken());// 공격 거리 제한
-		ans = 0;
-		//map = new int[N + 1][M]; // 궁수는 N+1행에 있음
-		enemys = new ArrayList<>();
-		combiArr = new int[3]; // 3명의 궁수의 열 위치를 정한다.
+		maxKill = 0;
+		enemyCnt = 0;
+		map = new int[N][M]; 
+		
+		combiArr = new int[3];
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < M; j++) {
-				if (Integer.parseInt(st.nextToken())== 1)
-					enemys.add(new Point(i, j)); // 적들의 위치를 리스트에 넣는다.
+				int tmp = Integer.parseInt(st.nextToken());
+				map[i][j] = tmp;
+				if (tmp == 1) enemyCnt++;
 			}
-		}
-
-		// hmap: key값에 해당 턴에 화살을 맞은 적의 POINT를 주고 중복되지 않도록 관리하는 hashmap
-		hmap = new HashMap<>();
-		// 궁수는 n+1 행 이상 부터 있을 수 있다.그런데 궁수는 3명이고 M은 3이상이므로 n+1 행에 모두 위치한다.
-		// 중복x, 조합 -> mC3 m개의 column중에 3개뽑는 조합
-
+		}//입력 완료
 		combi(0, 0);
-		System.out.println(ans);
+		System.out.println(maxKill);
 	}
-
 	private static void combi(int cnt, int sIdx) {
 		if (cnt == 3) { // 기저조건, 궁수 3명의 자리 뽑음(열 위치를 정함)
-			ArrayList<Point> tmpEnemys = new ArrayList<>();// 하드 카피
-			for(Point x : enemys) {
-				tmpEnemys.add(x);
-			}
-			// 이 조합 경우의 수에서 화살을 맞출 수 있는 적의 수 
-			int tmpNum = 0;
-			while (!tmpEnemys.isEmpty()) { //이 조합에서 적이 모두 사라질 때까지 반복
-				//while문의 반복할 때마다 활을 한번 쏜다.
-				// 화살은 3명의 궁수가 동시에 쏜다
-				hmap = new HashMap<>(); // 화살을 한번 쏠때마다 hmap 초기화, 이번 화살턴에서 
-				//맞출 적들의 point를 중복이 안되도록 저장
-				for (int i = 0; i < cnt; i++) {
-					int col = combiArr[i];
-					// 한 궁수의 위치는 map[N][col]
-					// 궁수 위치와 적들 사이의 거리차가 가장 작은 적을 선택한다. -> 오름차순
-					// 거리로 정렬하는데 거리가 같다면 제일 왼쪽에 있는 적
-					// 즉, x는 커야되고 y는 작아야함.
-					// 그런데 궁수 위치에서부터 각각 잰 두 적의 거리가 같다는 것은 곧 하나는 X거리차가 크고
-					// 다른 하나는 Y거리차가 크다는 것이므로 가장 왼쪽에 있는 적을 고르려면
-					// Y의 위치만 고려하여 가장 작은 것을 고르면 된다. -> 오름차순
-					Collections.sort(tmpEnemys, new Comparator<Point>() {
-						@Override
-						public int compare(Point o1, Point o2) {
-							// 거리가 같을때
-							if ((Math.abs(o1.x - N) + Math.abs(o1.y - col)) == (Math.abs(o2.x - N)
-									+ Math.abs(o2.y - col))) {
-								// 가장 왼쪽에 있는값 -> 거리는 같을 때, 열 기준 오름차순
-								return o1.y - o2.y;
-							}
-							return (Math.abs(o1.x - N) + Math.abs(o1.y - col))
-									- (Math.abs(o2.x - N) + Math.abs(o2.y - col)); // 오름차순
-						}
-					});
-					Point p = tmpEnemys.get(0);//가장 가까운 적
-					if( (Math.abs(p.x - N) + Math.abs(p.y - col)) <= D) {
-						if (!hmap.containsKey(p)) { //그 적이 처음 화살을 맞았다면 
-							hmap.put(p, 1);
-							tmpNum++;
-						}		
-					}
-				}//end of for(화살쏘기)
-
-				for (Point arrowedEnemy : hmap.keySet()) { //화살을 맞은 적의 포인트에 해당하는 
-					//tmpEnemys의 배열 값을 삭제한다
-					for(int i = tmpEnemys.size()-1; i >= 0; i++) {
-						if(arrowedEnemy.equals(tmpEnemys.get(i))) {
-							tmpEnemys.remove(i);		
-						}
-					}
-				}
-				//남아있는 적은 한칸 앞으로 이동
-				for(int i = tmpEnemys.size()-1; i >= 0 ; i--) {
-					Point p = tmpEnemys.get(i);
-					//성이 있는 칸으로 들어오면 삭제하고 아니면 이동
-					if(p.x + 1 < N) {
-						tmpEnemys.add(new Point(p.x + 1, p.y));
-					}
-					tmpEnemys.remove(i);
-				}
-			}//end of while
-			ans = Math.max(ans, tmpNum);
+			startGame(combiArr);
 			return;
 		}
 		//조합 경우의 수 만들기
 		else {
 			for (int i = sIdx; i < M; i++) {
 				combiArr[cnt] = i;
-				combi(cnt + 1, i + 1); //재귀 호출
+				combi(cnt + 1, i + 1);
+				if(maxKill == enemyCnt) break;
 			}
 		}
+	}
+
+	private static void startGame(int[] combiArr) {
+		int[][] combiMap = new int[N][M]; //궁수 배치 후 사용할 map deep copy
+		for(int i = 0 ;i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				combiMap[i][j] = map[i][j];
+			}
+		}
+		int killCnt =0; //화살로 죽은 적의 수
+		for(int shootArrowTimes = 0; shootArrowTimes < N; shootArrowTimes++) {
+			HashSet<List<Integer>> arrowedHashSet = shootArrow(combiArr, combiMap);//화살 한번 쏴서 맞은 적 받아옴
+			
+			for(List<Integer> tmpArr : arrowedHashSet) {
+				combiMap[tmpArr.get(0)][tmpArr.get(1)] = 0; //적 죽이기
+				killCnt++;
+			}
+			
+			//적 한 칸 아래로 이동
+			boolean flag = moveEnemys(combiMap);
+			if(!flag) break; //남아있는 적이 없을 때
+		}
+		maxKill = Math.max(maxKill, killCnt);
+	}
+	private static HashSet<List<Integer>> shootArrow(int[] combiArr, int[][] combiMap) {
+		HashSet<List<Integer>> arrowedHashSet = new HashSet<>(); //화살 맞은 적을 저장할 set
+		
+		for(int col : combiArr) {
+			boolean[][] isVisited = new boolean[N][M]; //방문 체크 배열
+			if(combiMap[N-1][col] == 1) { //탐색 시작 위치에 적이 있는 경우
+				List<Integer> tmpArr = Arrays.asList(N-1, col);
+				arrowedHashSet.add(tmpArr);
+				continue;
+			}
+			isVisited[N-1][col] = true;
+			Queue<DisPoint> queue = new LinkedList<>();
+			queue.offer(new DisPoint(N-1, col, 1));
+			boolean flag = false;
+			while(!queue.isEmpty()) {
+				DisPoint tmpDisPoint = queue.poll();
+				if(tmpDisPoint.dis >= D) break;  //공격 제한 거리를 넘는 경우
+				for(int dir = 0; dir < 3; dir++) { //3방 탐색 좌 상 우
+					int nx = tmpDisPoint.x + dx[dir];
+					int ny = tmpDisPoint.y + dy[dir];
+					if (nx < 0 || nx >= N || ny < 0 || ny >= M || isVisited[nx][ny] == true)
+						continue;
+					isVisited[nx][ny] = true;
+					queue.offer(new DisPoint(nx, ny, tmpDisPoint.dis + 1));
+					if(combiMap[nx][ny] == 1) { //가장 처음 만난 적을 담고 break
+						List<Integer> tmpArr = Arrays.asList(nx, ny);
+						arrowedHashSet.add(tmpArr);
+						flag = true;
+						break;
+					}
+				}//end of 3방 탐색
+				if(flag) break;
+			}//end of while(queue)
+		}//end of 궁수 3명
+		return arrowedHashSet;
+	}
+	
+	private static boolean moveEnemys(int[][] combiMap) {
+		boolean flag = false;
+		
+		for(int i = N-1; i >= 0; i-- ) {
+			for(int j = 0; j < M ; j++) {
+				if(i == N-1) combiMap[i][j] = 0; 
+				else {
+					if(combiMap[i][j] == 1) {
+						flag = true;
+						combiMap[i+1][j] = 1;
+						combiMap[i][j] = 0;
+					}
+				} 
+			}
+		}
+		return flag;
 	}
 }
